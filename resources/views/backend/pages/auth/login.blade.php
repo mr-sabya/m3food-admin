@@ -1,4 +1,4 @@
-@extends('layouts.guest')
+@extends('backend.backend.layouts.guest')
 
 @section('content')
 <section class="auth-page-wrapper-2 py-4 position-relative d-flex align-items-center justify-content-center min-vh-100 bg-light">
