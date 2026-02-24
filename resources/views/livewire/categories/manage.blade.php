@@ -18,7 +18,7 @@
         <div class="row">
             <!-- Left Column: Main Info -->
             <div class="col-md-8">
-                <div class="card shadow-sm mb-4">
+                <div class="card">
                     <div class="card-header">
                         <h5 class="m-0">Category Info</h5>
                     </div>
@@ -76,7 +76,7 @@
 
             <!-- Right Column: Settings & Media -->
             <div class="col-md-4">
-                <div class="card shadow-sm mb-4">
+                <div class="card">
                     <div class="card-header">
                         <h5 class="m-0">Relationships & Media</h5>
                     </div>
@@ -98,17 +98,12 @@
                             <div class="col-lg-6">
                                 <!-- IMAGE UPLOAD -->
                                 <div class="mb-3">
-                                    <label for="image" class="form-label">Category Image</label>
-                                    <div class="image-preview border p-2 mb-2 rounded bg-light text-center">
-                                        @if ($image)
-                                        <img src="{{ $image->temporaryUrl() }}" class="img-fluid" style="max-height: 150px;">
-                                        @elseif ($currentImage)
-                                        <img src="{{ asset('storage/' . $currentImage) }}" alt="Current Image" class="img-fluid" style="max-height: 150px;">
-                                        @else
-                                        <span class="text-muted small">No image uploaded</span>
-                                        @endif
-                                    </div>
-                                    <input type="file" class="form-control @error('image') is-invalid @enderror" id="image" wire:model.live="image">
+
+                                    <x-image-preview
+                                        model="image"
+                                        :image="$image"
+                                        :existing="$currentImage"
+                                        label="Category Image" />
                                     <small class="form-text text-muted">Max 1MB. JPG, PNG.</small>
                                     @error('image') <div class="invalid-feedback">{{ $message }}</div> @enderror
                                 </div>
@@ -117,17 +112,20 @@
                                 <!-- ICON UPLOAD (New Section) -->
                                 <div class="mb-3">
                                     <label for="icon" class="form-label">Category Icon</label>
-                                    <div class="image-preview border p-2 mb-2 rounded bg-light text-center">
+                                    <div class="image-preview">
                                         @if ($icon)
-                                        <img src="{{ $icon->temporaryUrl() }}" class="img-fluid" style="max-height: 64px;">
+                                        <img src="{{ $icon->temporaryUrl() }}">
                                         @elseif ($currentIcon)
                                         {{-- Handle both seeded assets and storage files logic implicitly via asset helper or explicit logic --}}
                                         @php
                                         $iconUrl = Str::startsWith($currentIcon, 'assets') ? asset($currentIcon) : asset('storage/' . $currentIcon);
                                         @endphp
-                                        <img src="{{ $iconUrl }}" alt="Current Icon" class="img-fluid" style="max-height: 64px;">
+                                        <img src="{{ $iconUrl }}" alt="Current Icon">
                                         @else
-                                        <span class="text-muted small">No icon uploaded</span>
+                                        <div class="icon">
+                                            <i class="ri-file-image-line"></i>
+                                            <span class="text-muted small">No image uploaded</span>
+                                        </div>
                                         @endif
                                     </div>
                                     <input type="file" class="form-control @error('icon') is-invalid @enderror" id="icon" wire:model.live="icon">
@@ -146,7 +144,7 @@
 
             <!-- Bottom: SEO -->
             <div class="col-md-12">
-                <div class="card shadow-sm mb-4">
+                <div class="card">
                     <div class="card-header">
                         <h5 class="m-0">SEO Information</h5>
                     </div>

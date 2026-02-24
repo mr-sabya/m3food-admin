@@ -114,7 +114,25 @@
                         </tr>
                         @empty
                         <tr>
-                            <td colspan="7" class="text-center">No categories found.</td>
+                            <td colspan="8" class="py-5">
+                                <div class="text-center py-5">
+                                    <!-- Icon -->
+                                    <div class="mb-3">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" fill="currentColor" class="text-secondary opacity-25" viewBox="0 0 16 16">
+                                            <path d="M9.293 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4.707A1 1 0 0 0 13.707 4L10 .293A1 1 0 0 0 9.293 0zM9.5 3.5v-2l3 3h-2a1 1 0 0 1-1-1zM11 8H5a.5.5 0 0 1 0-1h6a.5.5 0 0 1 0 1zm0 2H5a.5.5 0 0 1 0-1h6a.5.5 0 0 1 0 1zm0 2H5a.5.5 0 0 1 0-1h6a.5.5 0 0 1 0 1z" />
+                                        </svg>
+                                    </div>
+                                    <!-- Text Content -->
+                                    <h4 class="fw-bold text-dark">No Categories Found</h4>
+                                    <p class="text-muted mx-auto" style="max-width: 400px;">
+                                        It looks like you haven't added any categories yet. Start organizing your products by creating your first category.
+                                    </p>
+                                    <!-- CTA Button -->
+                                    <a href="{{ route('product.categories.create') }}" class="btn btn-primary shadow-sm mt-3">
+                                        <i class="fas fa-plus me-1"></i> Add New Category
+                                    </a>
+                                </div>
+                            </td>
                         </tr>
                         @endforelse
                     </tbody>
