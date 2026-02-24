@@ -13,9 +13,24 @@ return new class extends Migration
     {
         Schema::create('wishlists', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->unique()->constrained('users')->onDelete('cascade'); // Each user has one wishlist
-            $table->string('name')->nullable(); // Optional: if you want users to name their wishlists
-            $table->boolean('is_public')->default(false); // Can this wishlist be shared/viewed publicly?
+
+            // The User who owns the wishlist item
+            $table->foreignId('user_id')
+                ->constrained()
+                ->onDelete('cascade');
+
+            // The Product added to the wishlist
+            $table->foreignId('product_id')
+                ->constrained()
+                ->onDelete('cascade');
+
+            /**
+             * Composite Unique Index:
+             * This prevents the same user from adding the same product 
+             * to their wishlist multiple times.
+             */
+            $table->unique(['user_id', 'product_id']);
+
             $table->timestamps();
         });
     }

@@ -13,11 +13,38 @@ return new class extends Migration
     {
         Schema::create('cart_items', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->foreignId('product_id')->constrained()->onDelete('cascade');
+
+            /**
+             * User Relationship:
+             * Nullable to allow Guest Carts. When a user logs in, 
+             * you can associate these items with their user_id.
+             */
+            $table->foreignId('user_id')
+                ->nullable()
+                ->constrained()
+                ->onDelete('cascade');
+
+            /**
+             * Session ID:
+             * Used to identify a guest's cart via their browser session.
+             * Indexed for faster lookups when retrieving guest carts.
+             */
+            $table->string('session_id')->nullable()->index();
+
+            // Product Relationship
+            $table->foreignId('product_id')
+                ->constrained()
+                ->onDelete('cascade');
+
             $table->integer('quantity')->default(1);
-            // Store variants like Color/Size as JSON
+
+            /**
+             * Options (JSON):
+             * Stores selected variants (e.g., {"color": "Blue", "size": "XL"}) 
+             * or any other custom product customizations.
+             */
             $table->json('options')->nullable();
+
             $table->timestamps();
         });
     }

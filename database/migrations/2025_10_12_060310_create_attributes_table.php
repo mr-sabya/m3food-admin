@@ -3,6 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use App\Enums\AttributeDisplayType; // Ensure this Enum exists
 
 return new class extends Migration
 {
@@ -11,13 +12,20 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('attributes', function (Blueprint $table) {
+        // Get the values directly from your PHP enum cases
+        $enumCases = array_map(fn($case) => $case->value, AttributeDisplayType::cases());
+
+        Schema::create('attributes', function (Blueprint $table) use ($enumCases) {
             $table->id();
-            $table->string('name')->unique(); // e.g., "Color", "Size", "RAM", "Screen Size"
-            $table->string('slug')->unique(); // For internal identification/filtering
-            $table->enum('display_type', ['text', 'color_swatch', 'image_swatch', 'dropdown', 'radio', 'checkbox'])->default('text'); // How it's displayed on frontend
-            $table->boolean('is_filterable')->default(true); // Can this attribute be used in frontend filters?
-            $table->boolean('is_active')->default(true); // Is this attribute currently in use?
+            $table->string('name')->unique(); // e.g., "Color", "Size"
+            $table->string('slug')->unique(); // Internal identification
+
+            // Define the enum column using your Enum class values
+            $table->enum('display_type', $enumCases)
+                ->default(AttributeDisplayType::Text->value);
+
+            $table->boolean('is_filterable')->default(true); // Used in frontend sidebar filters
+            $table->boolean('is_active')->default(true);
             $table->timestamps();
         });
     }

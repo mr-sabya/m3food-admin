@@ -13,42 +13,46 @@ return new class extends Migration
     {
         Schema::create('products', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('vendor_id')->nullable()->constrained('users')->onDelete('set null'); // Null if admin product
-            $table->foreignId('category_id')->constrained('categories')->onDelete('cascade');
-            $table->foreignId('brand_id')->nullable()->constrained('brands')->onDelete('set null');
+            // Basic Info
+            $table->foreignId('brand_id')->nullable()->constrained()->onDelete('set null');
             $table->string('name');
             $table->string('slug')->unique();
+            $table->string('sku')->unique()->nullable();
             $table->text('short_description')->nullable();
             $table->longText('long_description')->nullable();
+            $table->string('thumbnail_image_path')->nullable();
+            $table->string('type')->default('normal'); // Matches your Enum
 
-            // Product Type
-            $table->enum('type', ['normal', 'variable', 'affiliate', 'digital'])->default('normal');
+            // Price (Using decimal for financial accuracy)
+            $table->decimal('regular_price', 15, 2)->default(0.00);
+            $table->decimal('sale_price', 15, 2)->nullable();
+            $table->decimal('retail_price', 15, 2)->nullable();
+            $table->decimal('distributor_price', 15, 2)->nullable();
+            $table->decimal('purchase_price', 15, 2)->nullable();
 
-            // General fields applicable to normal/digital/affiliate
-            $table->string('sku')->unique()->nullable();
-            $table->decimal('price', 10, 2)->default(0.00);
-            $table->decimal('compare_at_price', 10, 2)->nullable();
-            $table->decimal('cost_price', 10, 2)->nullable(); // For internal profit tracking
-            $table->integer('quantity')->default(0); // Stock for normal/digital. 0 for variable parent.
-            $table->decimal('weight', 8, 2)->nullable(); // For shipping
+            // Product Specifications
+            $table->decimal('weight', 8, 2)->nullable();
+            $table->string('weight_unit')->nullable();
+            $table->decimal('volume', 8, 2)->nullable();
+            $table->string('volume_unit')->nullable();
 
-            $table->boolean('is_active')->default(false); // Needs admin/vendor approval/publishing
+            // Status
+            $table->boolean('is_active')->default(true);
             $table->boolean('is_featured')->default(false);
-            $table->boolean('is_new')->default(true); // Can be set by logic later
-            $table->boolean('is_manage_stock')->default(true);
+            $table->boolean('is_new')->default(true);
+
+            // Stock and Order Limits
+            $table->boolean('is_manage_stock')->default(false);
+            $table->integer('quantity')->default(0);
             $table->integer('min_order_quantity')->default(1);
             $table->integer('max_order_quantity')->nullable();
 
-            $table->string('seo_title')->nullable();
-            $table->text('seo_description')->nullable();
-
-            // Affiliate Product Specific Fields
-            $table->string('affiliate_url')->nullable();
-
-            // Digital Product Specific Fields
-            $table->string('digital_file')->nullable(); // Path to the actual file
-            $table->integer('download_limit')->nullable(); // Max downloads per purchase
-            $table->integer('download_expiry_days')->nullable(); // Days until download link expires
+            // SEO and OG Content
+            $table->string('meta_title')->nullable();
+            $table->text('meta_description')->nullable();
+            $table->string('og_title')->nullable();
+            $table->text('og_description')->nullable();
+            $table->string('og_image_path')->nullable();
 
             $table->timestamps();
         });

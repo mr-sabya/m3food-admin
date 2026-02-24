@@ -6,16 +6,12 @@ enum ProductType: string
 {
     case Normal = 'normal';
     case Variable = 'variable';
-    case Affiliate = 'affiliate';
-    case Digital = 'digital';
-
+    
     public function label(): string
     {
         return match ($this) {
             self::Normal => 'Normal Product',
             self::Variable => 'Variable Product',
-            self::Affiliate => 'Affiliate Product',
-            self::Digital => 'Digital Product',
         };
     }
 
@@ -27,14 +23,7 @@ enum ProductType: string
     {
         return $this === self::Variable;
     }
-    public function isAffiliate(): bool
-    {
-        return $this === self::Affiliate;
-    }
-    public function isDigital(): bool
-    {
-        return $this === self::Digital;
-    }
+   
 
     public static function values(): array
     {

@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('settings', function (Blueprint $table) {
             $table->id();
             $table->string('key')->unique(); // Unique identifier for the setting (e.g., 'site_name', 'admin_email')
+            $table->string('label')->nullable();
             $table->longText('value')->nullable(); // The value of the setting (can be long text, JSON, etc.)
             $table->enum('type', ['string', 'integer', 'boolean', 'json', 'text', 'email', 'url', 'image', 'color', 'password'])->default('string'); // Helps with casting and admin UI
             $table->text('description')->nullable(); // Explains what the setting does for admin users

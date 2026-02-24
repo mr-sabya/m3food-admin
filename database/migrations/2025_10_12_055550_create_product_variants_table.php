@@ -21,6 +21,7 @@ return new class extends Migration
             $table->integer('quantity')->default(0); // Stock for this specific variant
             $table->decimal('weight', 8, 2)->nullable(); // Variant-specific weight
             $table->boolean('is_active')->default(true); // Is this variant purchasable
+            $table->softDeletes();
             $table->timestamps();
         });
     }

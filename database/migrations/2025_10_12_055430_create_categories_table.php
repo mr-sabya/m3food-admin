@@ -18,6 +18,7 @@ return new class extends Migration
             $table->text('description')->nullable();
             $table->foreignId('parent_id')->nullable()->constrained('categories')->onDelete('set null'); // Self-referencing for hierarchical categories
             $table->string('image')->nullable(); // Path to category icon/image
+            $table->string('icon')->nullable(); // Optional icon class for frontend display (e.g., FontAwesome)
             $table->boolean('is_active')->default(true); // Is this category visible/enabled?
             $table->boolean('show_on_homepage')->default(false); // Feature on homepage?
             $table->integer('sort_order')->default(0); // Manual sorting order for display
