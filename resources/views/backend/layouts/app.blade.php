@@ -135,6 +135,8 @@
         </div>
     </div>
 
+    <x-toast />
+
     <!-- JAVASCRIPT -->
     <script data-navigate-once src="{{ asset('assets/backend/libs/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
     <script data-navigate-once src="{{ asset('assets/backend/libs/simplebar/simplebar.min.js') }}"></script>

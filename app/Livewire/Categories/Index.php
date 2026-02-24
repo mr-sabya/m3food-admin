@@ -17,6 +17,9 @@ class Index extends Component
     public $sortDirection = 'asc';
     public $perPage = 10;
 
+    // Property to track which category is selected for deletion
+    public $categoryIdBeingDeleted = null;
+
     // Listeners for events from the form component
     protected $listeners = ['categorySaved' => '$refresh', 'categoryCreated' => '$refresh'];
 
@@ -51,38 +54,69 @@ class Index extends Component
     // Emit event to open edit form in CategoryForm component
     public function editCategory($categoryId)
     {
-        // This will generate a URL like /categories/1/edit and redirect the browser
         return $this->redirect(route('product.categories.edit', ['category' => $categoryId]), navigate: true);
     }
 
-    // Delete category
-    public function deleteCategory($categoryId)
+    /**
+     * Set the category ID and open the confirmation modal
+     */
+    public function confirmDelete($categoryId)
     {
-        $category = Category::find($categoryId);
+        $this->categoryIdBeingDeleted = $categoryId;
+        $this->dispatch('show-delete-modal');
+    }
+
+    /**
+     * Perform the actual deletion
+     */
+    public function deleteCategory()
+    {
+        if (!$this->categoryIdBeingDeleted) {
+            return;
+        }
+
+        $category = Category::find($this->categoryIdBeingDeleted);
 
         if (!$category) {
-            session()->flash('error', 'Category not found.');
+            $this->dispatch('hide-delete-modal');
+            $this->dispatch('notify', message: 'Category not found.', type: 'danger');
             return;
         }
 
+        // Validation: Check for subcategories
         if ($category->children()->count() > 0) {
-            session()->flash('error', 'Cannot delete category with subcategories. Please move or delete subcategories first.');
+            $this->dispatch('hide-delete-modal');
+            $this->dispatch('notify', message: 'Cannot delete category with subcategories. Please move or delete subcategories first.', type: 'danger');
             return;
         }
 
+        // Validation: Check for associated products
         if ($category->products()->count() > 0) {
-            session()->flash('error', 'Cannot delete category with associated products. Please reassign or delete products first.');
+            $this->dispatch('hide-delete-modal');
+            $this->dispatch('notify', message: 'Cannot delete category with associated products. Please reassign products first.', type: 'danger');
             return;
         }
 
-        // Delete image file if it exists
+        // Delete associated image file if it exists
         if ($category->image && Storage::disk('public')->exists($category->image)) {
             Storage::disk('public')->delete($category->image);
         }
 
+        // Perform delete
         $category->delete();
-        session()->flash('message', 'Category deleted successfully!');
-        $this->resetPage(); // Reset pagination in case the last item on a page was deleted
+
+        // Cleanup state
+        $this->categoryIdBeingDeleted = null;
+
+        // Close modal and show success notification
+        $this->dispatch('hide-delete-modal');
+        $this->dispatch(
+            'notify',
+            message: 'Category deleted successfully!',
+            type: 'success'
+        );
+
+        $this->resetPage();
     }
 
     public function render()

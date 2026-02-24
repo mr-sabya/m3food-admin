@@ -1,3 +1,7 @@
+.image-preview-wrapper {
+    width: 100%;
+}
+
 .image-preview {
     position: relative;
     width: 100%;

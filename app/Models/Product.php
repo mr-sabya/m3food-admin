@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 use App\Enums\ProductType;
+use App\Enums\VolumeUnit;
+use App\Enums\WeightUnit;
 use Illuminate\Support\Facades\Storage;
 
 class Product extends Model
@@ -56,7 +58,9 @@ class Product extends Model
 
         // Spec Casts
         'weight'            => 'decimal:2',
+        'weight_unit'       => WeightUnit::class,
         'volume'            => 'decimal:2',
+        'volume_unit'       => VolumeUnit::class,
 
         // Boolean Casts
         'is_active'         => 'boolean',
@@ -172,5 +176,4 @@ class Product extends Model
     {
         return $query->where('is_active', true);
     }
-    
 }
