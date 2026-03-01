@@ -1,21 +1,7 @@
 <div class="py-4">
     <h2 class="mb-4">Brand Management</h2>
 
-    @if (session()->has('message'))
-    <div class="alert alert-success alert-dismissible fade show" role="alert">
-        {{ session('message') }}
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    </div>
-    @endif
-
-    @if (session()->has('error'))
-    <div class="alert alert-danger alert-dismissible fade show" role="alert">
-        {{ session('error') }}
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    </div>
-    @endif
-
-    <div class="card shadow-sm mb-4">
+    <div class="card">
         <div class="card-header d-flex justify-content-between align-items-center">
             <h5 class="mb-0">Brands List</h5>
             <button class="btn btn-primary" wire:click="createBrand">
@@ -97,7 +83,25 @@
                         </tr>
                         @empty
                         <tr>
-                            <td colspan="7" class="text-center">No brands found.</td>
+                            <td colspan="7" class="py-5">
+                                <div class="text-center py-5">
+                                    <!-- Icon -->
+                                    <div class="mb-3">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" fill="currentColor" class="text-secondary opacity-25" viewBox="0 0 16 16">
+                                            <path d="M9.293 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4.707A1 1 0 0 0 13.707 4L10 .293A1 1 0 0 0 9.293 0zM9.5 3.5v-2l3 3h-2a1 1 0 0 1-1-1zM11 8H5a.5.5 0 0 1 0-1h6a.5.5 0 0 1 0 1zm0 2H5a.5.5 0 0 1 0-1h6a.5.5 0 0 1 0 1zm0 2H5a.5.5 0 0 1 0-1h6a.5.5 0 0 1 0 1z" />
+                                        </svg>
+                                    </div>
+                                    <!-- Text Content -->
+                                    <h4 class="fw-bold text-dark">No Brands Found</h4>
+                                    <p class="text-muted mx-auto" style="max-width: 400px;">
+                                        It looks like you haven't added any brands yet. Start organizing your products by creating your first brand.
+                                    </p>
+                                    <!-- CTA Button (Triggers Livewire Modal) -->
+                                    <button type="button" wire:click="createBrand" class="btn btn-primary shadow-sm mt-3">
+                                        <i class="fas fa-plus me-1"></i> Add New Brand
+                                    </button>
+                                </div>
+                            </td>
                         </tr>
                         @endforelse
                     </tbody>
@@ -128,9 +132,31 @@
 
                         <div class="mb-3">
                             <label for="slug" class="form-label">Slug <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control @error('slug') is-invalid @enderror" id="slug" wire:model.defer="slug">
+
+                            <div class="input-group">
+                                <input type="text"
+                                    class="form-control @error('slug') is-invalid @enderror"
+                                    id="slug"
+                                    wire:model.defer="slug">
+
+                                <button class="btn btn-outline-secondary"
+                                    type="button"
+                                    wire:click="generateSlug"
+                                    wire:loading.attr="disabled">
+                                    <span wire:loading.remove wire:target="generateSlug">
+                                        <i class="fas fa-magic"></i> Generate
+                                    </span>
+                                    <span wire:loading wire:target="generateSlug">
+                                        <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                                    </span>
+                                </button>
+
+                                @error('slug')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+
                             <small class="form-text text-muted">Unique URL-friendly identifier (e.g., `apple-inc`).</small>
-                            @error('slug') <div class="invalid-feedback">{{ $message }}</div> @enderror
                         </div>
 
                         <div class="mb-3">

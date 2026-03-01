@@ -114,6 +114,9 @@ Route::middleware('auth:admin')->group(function () {
 
     // orders
     Route::get('/orders', [App\Http\Controllers\Backend\OrderController::class, 'index'])->name('order.index');
+    
+    // create order
+    Route::get('/orders/create', [App\Http\Controllers\Backend\OrderController::class, 'create'])->name('order.create');
 
     Route::get('/orders/{orderId}/invoice', [App\Http\Controllers\Backend\OrderController::class, 'invoice'])->name('orders.invoice');
 

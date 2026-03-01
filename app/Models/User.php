@@ -147,13 +147,21 @@ class User extends Authenticatable
         return $this->role === UserRole::Customer;
     }
 
-    public function isVendor(): bool
+    public function refreshDeliveryStats()
     {
-        return $this->role === UserRole::Vendor;
-    }
+        $delivered = 'delivered';
+        $failed = ['returned', 'cancelled'];
+        $orderStats = $this->orders()->select('delivery_partner_id')
+            ->selectRaw('count(*) as total, sum(case when order_status = ? then 1 else 0 end) as delivered, sum(case when order_status in (?,?) then 1 else 0 end) as undelivered', [$delivered, ...$failed])
+            ->groupBy('delivery_partner_id')->get();
 
-    public function isInvestor(): bool
-    {
-        return $this->role === UserRole::Investor;
+        foreach ($orderStats as $stat) {
+            $this->deliveryStats()->updateOrCreate(['delivery_partner_id' => $stat->delivery_partner_id], [
+                'total_count' => $stat->total,
+                'delivered_count' => $stat->delivered,
+                'undelivered_count' => $stat->undelivered,
+                'success_rate' => $stat->total > 0 ? ($stat->delivered / $stat->total) * 100 : 0
+            ]);
+        }
     }
 }

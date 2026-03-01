@@ -14,6 +14,12 @@ class OrderController extends Controller
         return view('backend.pages.orders.index');
     }
 
+    // create
+    public function create()
+    {
+        return view('backend.pages.orders.create');    
+    }
+
     // invoice view
     public function invoice($orderId)
     {

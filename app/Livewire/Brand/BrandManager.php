@@ -153,10 +153,10 @@ class BrandManager extends Component
         if ($this->isEditing) {
             $brand = Brand::find($this->brandId);
             $brand->update($data);
-            session()->flash('message', 'Brand updated successfully!');
+            $this->dispatch('notify', message: 'Brand updated successfully.', type: 'success');
         } else {
             Brand::create($data);
-            session()->flash('message', 'Brand created successfully!');
+            $this->dispatch('notify', message: 'Brand created successfully.', type: 'success');
         }
 
         $this->closeModal();
@@ -204,13 +204,13 @@ class BrandManager extends Component
         $this->resetValidation();
     }
 
-    // Auto-generate slug when name changes
-    public function updatedName($value)
+    public function generateSlug()
     {
-        if (empty($this->slug) || Str::slug($value) === $this->slug) {
-            $this->slug = Str::slug($value);
+        if (!empty($this->name)) {
+            $this->slug = \Illuminate\Support\Str::slug($this->name);
         }
     }
+
 
     // Clear temporary logo when new one is selected
     public function updatedLogo()
@@ -223,8 +223,8 @@ class BrandManager extends Component
         $brands = Brand::query()
             ->when($this->search, function ($query) {
                 $query->where('name', 'like', '%' . $this->search . '%')
-                      ->orWhere('slug', 'like', '%' . $this->search . '%')
-                      ->orWhere('description', 'like', '%' . $this->search . '%');
+                    ->orWhere('slug', 'like', '%' . $this->search . '%')
+                    ->orWhere('description', 'like', '%' . $this->search . '%');
             })
             ->orderBy($this->sortField, $this->sortDirection)
             ->paginate($this->perPage);
