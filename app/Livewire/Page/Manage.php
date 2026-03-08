@@ -11,7 +11,6 @@ use Livewire\Component;
 use Livewire\WithFileUploads;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
-use Illuminate\Support\Facades\Storage;
 
 class Manage extends Component
 {
@@ -21,42 +20,70 @@ class Manage extends Component
     public $isEditing = false;
     public $pageTitle = 'Create New Page';
 
-    // Model Fields
     public $title, $slug, $page_type = 'landing_page', $status = 'draft';
-    public $theme_id, $header_id, $footer_id, $is_header_visible = true, $is_footer_visible = true;
-    public $meta_title, $meta_description, $meta_keywords, $og_image, $temp_og_image;
+    public $theme_id, $header_id, $footer_id;
+    public $is_header_visible = true, $is_footer_visible = true;
+
+    public $meta_title, $meta_description, $meta_keywords;
+    public $og_image, $temp_og_image;
+
     public $main_product_id, $show_checkout_form = false, $checkout_form_title;
     public $show_timer = false, $timer_label, $timer_ends_at;
+
     public $content = [];
 
-    public $iteration = 0;
     public $image_tmp;
+    public $iteration = 0;
 
     public function mount($pageId = null)
     {
         if ($pageId) {
+
             $page = Page::findOrFail($pageId);
+
             $this->pageId = $page->id;
             $this->isEditing = true;
+
             $this->fill($page->toArray());
-            $this->timer_ends_at = $page->timer_ends_at ? $page->timer_ends_at->format('Y-m-d\TH:i') : null;
+
+            $this->content = $page->content ?? [];
+
+            if (!$this->content) {
+                $this->addRow();
+            }
+
             $this->pageTitle = 'Edit Page: ' . $page->title;
+
+            if ($page->timer_ends_at) {
+                $this->timer_ends_at = $page->timer_ends_at->format('Y-m-d\TH:i');
+            }
         } else {
+
             $this->addRow();
         }
     }
 
-    // --- Builder Logic ---
+    /*
+    |--------------------------------------------------------------------------
+    | Builder
+    |--------------------------------------------------------------------------
+    */
+
     public function addRow()
     {
         $this->content[] = [
             'id' => uniqid(),
             'style' => [
                 'bg_color' => '#ffffff',
-                'padding_y' => '50', // px
-                'is_container' => true, // true = container, false = full width
+                'padding_y' => '50',
+                'is_container' => true,
             ],
-            'columns' => []
+            'columns' => [
+                [
+                    'width' => 'col-md-12',
+                    'elements' => []
+                ]
+            ]
         ];
     }
 
@@ -82,8 +109,9 @@ class Manage extends Component
 
     public function addElement($rowIndex, $colIndex, $type)
     {
+
         $defaultStyle = [
-            'bg_color' => 'transparent',
+            'bg_color' => '#ffffff',
             'text_color' => '#000000',
             'font_size' => '18',
             'font_weight' => 'normal',
@@ -92,55 +120,85 @@ class Manage extends Component
             'border_color' => '#dee2e6',
             'border_width' => '0',
             'border_style' => 'solid',
-            'border_radius' => '0',
-            'padding' => '0',
+            'border_radius' => '10',
+            'padding' => '20',
             'shadow' => 'none',
             'margin_x' => 'mx-auto'
         ];
 
-        $defaultData = match ($type) {
-            'text'  => [
+        if ($type === 'text') {
+
+            $data = [
                 'content' => '',
-                'url' => '', // New: Link URL
+                'url' => '',
                 'style' => $defaultStyle
-            ],
-            'image' => [
+            ];
+        } elseif ($type === 'image') {
+
+            $data = [
                 'path' => '',
                 'alt' => '',
-                'url' => '', // New: Link URL
-                'style' => $defaultStyle // New: Styles for images
-            ],
-            'video' => ['id' => '', 'width' => '100'],
-            default => []
-        };
+                'style' => [
+                    'width' => '100',
+                    'border_radius' => '0',
+                    'shadow' => 'none',
+                    'border_width' => '0'
+                ]
+            ];
+        } else {
+
+            $data = [
+                'id' => ''
+            ];
+        }
 
         $this->content[$rowIndex]['columns'][$colIndex]['elements'][] = [
             'type' => $type,
-            'data' => $defaultData
+            'data' => $data
         ];
     }
-
 
     public function removeElement($rowIndex, $colIndex, $elIndex)
     {
         unset($this->content[$rowIndex]['columns'][$colIndex]['elements'][$elIndex]);
-        $this->content[$rowIndex]['columns'][$colIndex]['elements'] = array_values($this->content[$rowIndex]['columns'][$colIndex]['elements']);
+
+        $this->content[$rowIndex]['columns'][$colIndex]['elements']
+            = array_values($this->content[$rowIndex]['columns'][$colIndex]['elements']);
     }
 
-    public function uploadElementImage($rowIndex, $colIndex, $elIndex, $file)
+    public function uploadElementImage($rowIndex, $colIndex, $elIndex)
     {
-        $path = $file->store('pages/builder', 'public');
+        $path = $this->image_tmp->store('pages/builder', 'public');
+
         $this->content[$rowIndex]['columns'][$colIndex]['elements'][$elIndex]['data']['path'] = $path;
+
+        $this->image_tmp = null;
+
         $this->iteration++;
     }
 
+    /*
+    |--------------------------------------------------------------------------
+    | Slug
+    |--------------------------------------------------------------------------
+    */
+
     public function updatedTitle($value)
     {
-        if (!$this->isEditing) $this->slug = Str::slug($value);
+        if (!$this->isEditing) {
+            $this->slug = Str::slug($value);
+        }
     }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Save
+    |--------------------------------------------------------------------------
+    */
 
     public function savePage()
     {
+
         $this->validate([
             'title' => 'required|string|max:255',
             'slug' => ['required', Rule::unique('pages')->ignore($this->pageId)],
@@ -167,7 +225,7 @@ class Manage extends Component
             'timer_label' => $this->timer_label,
             'timer_ends_at' => $this->timer_ends_at,
             'content' => $this->content,
-            'published_at' => ($this->status === 'published') ? now() : null,
+            'published_at' => $this->status === 'published' ? now() : null,
         ];
 
         if ($this->temp_og_image) {
@@ -177,7 +235,8 @@ class Manage extends Component
         Page::updateOrCreate(['id' => $this->pageId], $data);
 
         session()->flash('message', 'Page saved successfully!');
-        return redirect()->route('users.pages.index');
+
+        return redirect()->route('page.index');
     }
 
     public function render()

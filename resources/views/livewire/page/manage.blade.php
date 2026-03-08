@@ -89,12 +89,13 @@
                                                     </label>
 
                                                     {{-- Use wire:key to ensure Livewire tracks the nested editor correctly during DOM diffing --}}
-                                                    <div wire:key="editor-{{ $rowIndex }}-{{ $colIndex }}-{{ $elIndex }}" class="page-editor">
+                                                    @if(isset($content[$rowIndex]['columns'][$colIndex]['elements'][$elIndex]['data']['content']))
+                                                    <div wire:key="editor-{{ $rowIndex }}-{{ $colIndex }}-{{ $elIndex }}">
                                                         <livewire:quill-text-editor
                                                             wire:model.live="content.{{ $rowIndex }}.columns.{{ $colIndex }}.elements.{{ $elIndex }}.data.content"
-                                                            theme="snow"
-                                                            :height="'200px'" />
+                                                            theme="snow" />
                                                     </div>
+                                                    @endif
 
                                                     <small class="text-muted mt-1 d-block">
                                                         <i class="fas fa-info-circle me-1"></i>
