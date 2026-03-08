@@ -38,21 +38,70 @@ class Manage extends Component
     {
         if ($pageId) {
             $page = Page::findOrFail($pageId);
+
             $this->pageId = $page->id;
             $this->isEditing = true;
             $this->fill($page->toArray());
+
             $this->content = $page->content ?? [];
+
+            if (empty($this->content)) {
+                $this->initializeEmptyContent();
+            } else {
+                $this->normalizeContent();
+            }
+
             $this->pageTitle = 'Edit Page: ' . $page->title;
+
             if ($page->timer_ends_at) {
                 $this->timer_ends_at = $page->timer_ends_at->format('Y-m-d\TH:i');
             }
+        } else {
+            $this->initializeEmptyContent();
         }
+    }
 
-        if (!$this->content) {
-            $this->addRow();
-        }
-
-        $this->normalizeContent();
+    /** Ensures the first render always has a text element to avoid undefined keys */
+    private function initializeEmptyContent()
+    {
+        $this->content = [
+            [
+                'id' => uniqid(),
+                'style' => [
+                    'bg_color' => '#ffffff',
+                    'padding_y' => '50',
+                    'is_container' => true,
+                ],
+                'columns' => [
+                    [
+                        'width' => 'col-md-12',
+                        'elements' => [
+                            [
+                                'type' => 'text',
+                                'data' => [
+                                    'content' => '',
+                                    'style' => [
+                                        'bg_color' => '#ffffff',
+                                        'text_color' => '#000000',
+                                        'font_size' => '18',
+                                        'font_weight' => 'normal',
+                                        'text_align' => 'text-center',
+                                        'width' => '100',
+                                        'border_color' => '#dee2e6',
+                                        'border_width' => '0',
+                                        'border_style' => 'solid',
+                                        'border_radius' => '10',
+                                        'padding' => '20',
+                                        'shadow' => 'none',
+                                        'margin_x' => 'mx-auto',
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+        ];
     }
 
     // Ensure all nested arrays exist to prevent undefined key errors
@@ -64,16 +113,37 @@ class Manage extends Component
 
             foreach ($this->content[$r]['columns'] as $c => $col) {
                 $this->content[$r]['columns'][$c]['elements'] = $col['elements'] ?? [];
+
                 foreach ($this->content[$r]['columns'][$c]['elements'] as $e => $el) {
                     $this->content[$r]['columns'][$c]['elements'][$e]['data'] = $el['data'] ?? [];
+                    if (!isset($this->content[$r]['columns'][$c]['elements'][$e]['data'])) {
+                        $this->content[$r]['columns'][$c]['elements'][$e]['data'] = [];
+                    }
+
                     if ($el['type'] === 'text') {
                         $this->content[$r]['columns'][$c]['elements'][$e]['data']['content'] = $el['data']['content'] ?? '';
-                        $this->content[$r]['columns'][$c]['elements'][$e]['data']['style'] = $el['data']['style'] ?? [];
+                        $this->content[$r]['columns'][$c]['elements'][$e]['data']['style'] = $el['data']['style'] ?? [
+                            'bg_color' => '#fff',
+                            'text_color' => '#000',
+                            'font_size' => '18',
+                            'font_weight' => 'normal',
+                            'text_align' => 'text-center',
+                            'width' => '100',
+                            'border_color' => '#dee2e6',
+                            'border_width' => '0',
+                            'border_style' => 'solid',
+                            'border_radius' => '10',
+                            'padding' => '20',
+                            'shadow' => 'none',
+                            'margin_x' => 'mx-auto'
+                        ];
                     }
+
                     if ($el['type'] === 'image') {
                         $this->content[$r]['columns'][$c]['elements'][$e]['data']['path'] = $el['data']['path'] ?? '';
-                        $this->content[$r]['columns'][$c]['elements'][$e]['data']['style'] = $el['data']['style'] ?? [];
+                        $this->content[$r]['columns'][$c]['elements'][$e]['data']['style'] = $el['data']['style'] ?? ['width' => '100', 'border_radius' => '0', 'shadow' => 'none', 'border_width' => '0'];
                     }
+
                     if ($el['type'] === 'video') {
                         $this->content[$r]['columns'][$c]['elements'][$e]['data']['id'] = $el['data']['id'] ?? '';
                     }
@@ -116,10 +186,20 @@ class Manage extends Component
     public function addElement($rowIndex, $colIndex, $type)
     {
         $defaultStyle = ['bg_color' => '#fff', 'text_color' => '#000', 'font_size' => '18', 'font_weight' => 'normal', 'text_align' => 'text-center', 'width' => '100', 'border_color' => '#dee2e6', 'border_width' => '0', 'border_style' => 'solid', 'border_radius' => '10', 'padding' => '20', 'shadow' => 'none', 'margin_x' => 'mx-auto'];
-        if ($type === 'text') $data = ['content' => '', 'url' => '', 'style' => $defaultStyle];
-        elseif ($type === 'image') $data = ['path' => '', 'alt' => '', 'style' => ['width' => '100', 'border_radius' => '0', 'shadow' => 'none', 'border_width' => '0']];
-        else $data = ['id' => ''];
-        $this->content[$rowIndex]['columns'][$colIndex]['elements'][] = ['type' => $type, 'data' => $data];
+
+        if ($type === 'text') {
+            $data = ['content' => '', 'style' => $defaultStyle];
+        } elseif ($type === 'image') {
+            $data = ['path' => '', 'alt' => '', 'style' => ['width' => '100', 'border_radius' => '0', 'shadow' => 'none', 'border_width' => '0']];
+        } else { // video
+            $data = ['id' => ''];
+        }
+
+        $this->content[$rowIndex]['columns'][$colIndex]['elements'][] = [
+            'type' => $type,
+            'data' => $data
+        ];
+
         $this->normalizeContent();
     }
 

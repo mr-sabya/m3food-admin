@@ -70,7 +70,10 @@
                                                     </div>
                                                 </div>
                                                 <div wire:key="editor-{{ $rowIndex }}-{{ $colIndex }}-{{ $elIndex }}">
-                                                    <livewire:quill-text-editor wire:model.live="content.{{ $rowIndex }}.columns.{{ $colIndex }}.elements.{{ $elIndex }}.data.content" theme="snow" />
+                                                    <livewire:quill-text-editor
+                                                        wire:model.live="content.{{ $rowIndex }}.columns.{{ $colIndex }}.elements.{{ $elIndex }}.data.content"
+                                                        theme="snow"
+                                                        wire:key="editor-{{ $rowIndex }}-{{ $colIndex }}-{{ $elIndex }}" />
                                                 </div>
                                                 @elseif($element['type']==='image')
                                                 <div class="text-center mb-2">
