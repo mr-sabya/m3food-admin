@@ -5,11 +5,11 @@ namespace App\Http\Controllers\Backend;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
-class AboutController extends Controller
+class StoreController extends Controller
 {
     //
-    public  function index()
+    public function WareHouse()
     {
-        return view('backend.about.index');    
+        return view('backend.warehouse.index');    
     }
 }

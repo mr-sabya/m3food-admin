@@ -10,18 +10,18 @@ class CategoryController extends Controller
     // categories page
     public function index()
     {
-        return view('backend.pages.categories.index');
+        return view('backend.categories.index');
     }
 
     // add new category
     public function create()
     {
-        return view('backend.pages.categories.create');
+        return view('backend.categories.create');
     }
 
     // edit category
     public function edit($id)
     {
-        return view('backend.pages.categories.edit', compact('id'));
+        return view('backend.categories.edit', compact('id'));
     }
 }

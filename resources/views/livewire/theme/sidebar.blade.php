@@ -114,9 +114,6 @@
                             <li class="nav-item">
                                 <a href="{{ route('users.customers.index') }}" class="nav-link {{ request()->routeIs('users.customers.*') ? 'active' : '' }}" wire:navigate> Customers </a>
                             </li>
-                            <li class="nav-item">
-                                <a href="{{ route('users.vendors.index') }}" class="nav-link {{ request()->routeIs('users.vendors.*') ? 'active' : '' }}" wire:navigate> Vendors </a>
-                            </li>
                         </ul>
                     </div>
                 </li>

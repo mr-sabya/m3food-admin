@@ -10,19 +10,19 @@ class CollectionController extends Controller
     //
     public function index()
     {
-        return view('backend.pages.collection.index');    
+        return view('backend.collection.index');    
     }
     
     // create
     public function create()
     {
-        return view('backend.pages.collection.create');
+        return view('backend.collection.create');
     }
 
 
     // edit
     public function edit($id)
     {
-        return view('backend.pages.collection.edit', ['collectionId' => $id]);
+        return view('backend.collection.edit', ['collectionId' => $id]);
     }
 }

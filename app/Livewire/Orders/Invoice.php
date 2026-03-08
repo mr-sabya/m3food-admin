@@ -29,7 +29,7 @@ class Invoice extends Component
         // Use the already loaded $this->order
         $data = ['order' => $this->order];
 
-        $pdf = Pdf::loadView('pages.orders.invoice-pdf', [
+        $pdf = Pdf::loadView('orders.invoice-pdf', [
             'order' => $this->order
         ]);
 

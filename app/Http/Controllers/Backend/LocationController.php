@@ -10,18 +10,18 @@ class LocationController extends Controller
     //country
     public function countries()
     {
-        return view('backend.pages.locations.countries');
+        return view('backend.locations.countries');
     }
 
     // state
     public function states()
     {
-        return view('backend.pages.locations.states');
+        return view('backend.locations.states');
     }
 
     // city
     public function cities()
     {
-        return view('backend.pages.locations.cities');
+        return view('backend.locations.cities');
     }
 }

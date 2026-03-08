@@ -26,7 +26,7 @@
             <!-- Filter Toolbar -->
             <div class="row mb-3 g-2" style=" --bs-gutter-x: 10px;">
                 <div class="col-md-4 col-lg-4">
-                    <input type="text" class="form-control" placeholder="Search pages..." wire:model.live.debounce.300ms="search">
+                    <input type="text" class="form-control" placeholder="Search .." wire:model.live.debounce.300ms="search">
                 </div>
 
                 <div class="col-md-4 col-lg-2">

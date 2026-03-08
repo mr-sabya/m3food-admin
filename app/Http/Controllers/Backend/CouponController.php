@@ -11,19 +11,19 @@ class CouponController extends Controller
     // coupons page
     public function index()
     {
-        return view('backend.pages.coupon.index');
+        return view('backend.coupon.index');
     }
 
     // create coupon
     public function create()
     {
-        return view('backend.pages.coupon.create');
+        return view('backend.coupon.create');
     }
 
     // edit coupon
     public function edit($id)
     {
         $coupon = Coupon::findOrFail($id);
-        return view('backend.pages.coupon.edit', compact('coupon'));
+        return view('backend.coupon.edit', compact('coupon'));
     }
 }

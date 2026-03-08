@@ -85,31 +85,11 @@ Route::middleware('auth:admin')->group(function () {
         Route::get('/cities', [App\Http\Controllers\Backend\LocationController::class, 'cities'])->name('cities');
     });
 
-    // investment
-    Route::prefix('investment')->name('investment.')->group(function () {
-        Route::get('/projects', [App\Http\Controllers\Backend\ProjectController::class, 'index'])->name('projects.index');
-        Route::get('/investments', [App\Http\Controllers\Backend\InvestmentController::class, 'index'])->name('investments.index');
-    });
-
     // attributes
     Route::prefix('attributes')->name('attribute.')->group(function () {
         Route::get('/', [App\Http\Controllers\Backend\AttributeController::class, 'attributes'])->name('attributes.index');
         Route::get('/attribute-values', [App\Http\Controllers\Backend\AttributeController::class, 'attributeValues'])->name('attribute-values.index');
         Route::get('/attribute-sets', [App\Http\Controllers\Backend\AttributeController::class, 'attributeSets'])->name('attribute-sets.index');
-    });
-
-    // website
-    Route::prefix('website')->name('website.')->group(function () {
-        // banners
-        Route::get('/banners', [App\Http\Controllers\Backend\WebsiteController::class, 'banners'])->name('banner.index');
-
-        // feature
-        Route::get('/features', [App\Http\Controllers\Backend\WebsiteController::class, 'features'])->name('feature.index');
-
-        Route::get('/about', [App\Http\Controllers\Backend\AboutController::class, 'index'])->name('about.index');
-
-        // ad banner
-        Route::get('/ad-banner', [App\Http\Controllers\Backend\AdBannerController::class, 'index'])->name('ad-banner.index');
     });
 
     // orders
@@ -165,8 +145,11 @@ Route::middleware('auth:admin')->group(function () {
 
     // payment methods
     Route::get('/payment-methods', [App\Http\Controllers\Backend\PaymentMethodController::class, 'index'])->name('payment-method.index');
-
-
+    
+    
     Route::get('/profile', [App\Http\Controllers\Backend\AdminController::class, 'profile'])->name('profile');
     Route::get('/change-password', [App\Http\Controllers\Backend\AdminController::class, 'changePassword'])->name('change-password');
+    
+    // ware house
+    Route::get('/warehouse', [App\Http\Controllers\Backend\StoreController::class, 'WareHouse'])->name('warehouse.index');
 });

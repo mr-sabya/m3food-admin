@@ -9,12 +9,12 @@ class AdminController extends Controller
 {
     public function showForgotPassword()
     {
-        return view('backend.pages.auth.forgot-password');
+        return view('backend.auth.forgot-password');
     }
 
     public function showResetPassword($token)
     {
-        return view('backend.pages.auth.reset-password', ['token' => $token]);
+        return view('backend.auth.reset-password', ['token' => $token]);
     }
 
     /**
@@ -22,7 +22,7 @@ class AdminController extends Controller
      */
     public function profile()
     {
-        return view('backend.pages.profile');
+        return view('backend.profile');
     }
 
     /**
@@ -30,6 +30,6 @@ class AdminController extends Controller
      */
     public function changePassword()
     {
-        return view('backend.pages.change-password');
+        return view('backend.change-password');
     }
 }

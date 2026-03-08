@@ -10,6 +10,6 @@ class SettingController extends Controller
     // settings page
     public function index()
     {
-        return view('backend.pages.settings.index');
+        return view('backend.settings.index');
     }
 }

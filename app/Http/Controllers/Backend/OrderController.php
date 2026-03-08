@@ -11,25 +11,25 @@ class OrderController extends Controller
     //
     public function  index()
     {
-        return view('backend.pages.orders.index');
+        return view('backend.orders.index');
     }
 
     // create
     public function create()
     {
-        return view('backend.pages.orders.create');    
+        return view('backend.orders.create');    
     }
 
     // invoice view
     public function invoice($orderId)
     {
-        return view('backend.pages.orders.invoice', compact('orderId'));
+        return view('backend.orders.invoice', compact('orderId'));
     }
 
     // manage view
     public function manage($orderId)
     {
         $order = Order::findOrFail($orderId);
-        return view('backend.pages.orders.manage', compact('order'));
+        return view('backend.orders.manage', compact('order'));
     }
 }

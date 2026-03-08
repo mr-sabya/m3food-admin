@@ -1,5 +1,5 @@
 @extends('backend.layouts.app')
 
 @section('content')
-<livewire:banner.banner-manager />
+<livewire:warehouse.warehouse-manager />
 @endsection
