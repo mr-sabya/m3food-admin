@@ -31,180 +31,126 @@ class Manage extends Component
     public $show_timer = false, $timer_label, $timer_ends_at;
 
     public $content = [];
-
     public $image_tmp;
     public $iteration = 0;
 
     public function mount($pageId = null)
     {
         if ($pageId) {
-
             $page = Page::findOrFail($pageId);
-
             $this->pageId = $page->id;
             $this->isEditing = true;
-
             $this->fill($page->toArray());
-
             $this->content = $page->content ?? [];
-
-            if (!$this->content) {
-                $this->addRow();
-            }
-
             $this->pageTitle = 'Edit Page: ' . $page->title;
-
             if ($page->timer_ends_at) {
                 $this->timer_ends_at = $page->timer_ends_at->format('Y-m-d\TH:i');
             }
-        } else {
+        }
 
+        if (!$this->content) {
             $this->addRow();
+        }
+
+        $this->normalizeContent();
+    }
+
+    // Ensure all nested arrays exist to prevent undefined key errors
+    private function normalizeContent()
+    {
+        foreach ($this->content as $r => $row) {
+            $this->content[$r]['style'] = $row['style'] ?? ['bg_color' => '#fff', 'padding_y' => '50', 'is_container' => true];
+            $this->content[$r]['columns'] = $row['columns'] ?? [['width' => 'col-md-12', 'elements' => []]];
+
+            foreach ($this->content[$r]['columns'] as $c => $col) {
+                $this->content[$r]['columns'][$c]['elements'] = $col['elements'] ?? [];
+                foreach ($this->content[$r]['columns'][$c]['elements'] as $e => $el) {
+                    $this->content[$r]['columns'][$c]['elements'][$e]['data'] = $el['data'] ?? [];
+                    if ($el['type'] === 'text') {
+                        $this->content[$r]['columns'][$c]['elements'][$e]['data']['content'] = $el['data']['content'] ?? '';
+                        $this->content[$r]['columns'][$c]['elements'][$e]['data']['style'] = $el['data']['style'] ?? [];
+                    }
+                    if ($el['type'] === 'image') {
+                        $this->content[$r]['columns'][$c]['elements'][$e]['data']['path'] = $el['data']['path'] ?? '';
+                        $this->content[$r]['columns'][$c]['elements'][$e]['data']['style'] = $el['data']['style'] ?? [];
+                    }
+                    if ($el['type'] === 'video') {
+                        $this->content[$r]['columns'][$c]['elements'][$e]['data']['id'] = $el['data']['id'] ?? '';
+                    }
+                }
+            }
         }
     }
 
-    /*
-    |--------------------------------------------------------------------------
-    | Builder
-    |--------------------------------------------------------------------------
-    */
-
+    // ----------------------------
+    // Builder
+    // ----------------------------
     public function addRow()
     {
         $this->content[] = [
             'id' => uniqid(),
-            'style' => [
-                'bg_color' => '#ffffff',
-                'padding_y' => '50',
-                'is_container' => true,
-            ],
-            'columns' => [
-                [
-                    'width' => 'col-md-12',
-                    'elements' => []
-                ]
-            ]
+            'style' => ['bg_color' => '#ffffff', 'padding_y' => '50', 'is_container' => true],
+            'columns' => [['width' => 'col-md-12', 'elements' => []]]
         ];
+        $this->normalizeContent();
     }
 
     public function removeRow($rowIndex)
     {
         unset($this->content[$rowIndex]);
         $this->content = array_values($this->content);
+        $this->normalizeContent();
     }
-
     public function addColumn($rowIndex)
     {
-        $this->content[$rowIndex]['columns'][] = [
-            'width' => 'col-md-12',
-            'elements' => []
-        ];
+        $this->content[$rowIndex]['columns'][] = ['width' => 'col-md-12', 'elements' => []];
+        $this->normalizeContent();
     }
-
     public function removeColumn($rowIndex, $colIndex)
     {
         unset($this->content[$rowIndex]['columns'][$colIndex]);
         $this->content[$rowIndex]['columns'] = array_values($this->content[$rowIndex]['columns']);
+        $this->normalizeContent();
     }
 
     public function addElement($rowIndex, $colIndex, $type)
     {
-
-        $defaultStyle = [
-            'bg_color' => '#ffffff',
-            'text_color' => '#000000',
-            'font_size' => '18',
-            'font_weight' => 'normal',
-            'text_align' => 'text-center',
-            'width' => '100',
-            'border_color' => '#dee2e6',
-            'border_width' => '0',
-            'border_style' => 'solid',
-            'border_radius' => '10',
-            'padding' => '20',
-            'shadow' => 'none',
-            'margin_x' => 'mx-auto'
-        ];
-
-        if ($type === 'text') {
-
-            $data = [
-                'content' => '',
-                'url' => '',
-                'style' => $defaultStyle
-            ];
-        } elseif ($type === 'image') {
-
-            $data = [
-                'path' => '',
-                'alt' => '',
-                'style' => [
-                    'width' => '100',
-                    'border_radius' => '0',
-                    'shadow' => 'none',
-                    'border_width' => '0'
-                ]
-            ];
-        } else {
-
-            $data = [
-                'id' => ''
-            ];
-        }
-
-        $this->content[$rowIndex]['columns'][$colIndex]['elements'][] = [
-            'type' => $type,
-            'data' => $data
-        ];
+        $defaultStyle = ['bg_color' => '#fff', 'text_color' => '#000', 'font_size' => '18', 'font_weight' => 'normal', 'text_align' => 'text-center', 'width' => '100', 'border_color' => '#dee2e6', 'border_width' => '0', 'border_style' => 'solid', 'border_radius' => '10', 'padding' => '20', 'shadow' => 'none', 'margin_x' => 'mx-auto'];
+        if ($type === 'text') $data = ['content' => '', 'url' => '', 'style' => $defaultStyle];
+        elseif ($type === 'image') $data = ['path' => '', 'alt' => '', 'style' => ['width' => '100', 'border_radius' => '0', 'shadow' => 'none', 'border_width' => '0']];
+        else $data = ['id' => ''];
+        $this->content[$rowIndex]['columns'][$colIndex]['elements'][] = ['type' => $type, 'data' => $data];
+        $this->normalizeContent();
     }
 
     public function removeElement($rowIndex, $colIndex, $elIndex)
     {
         unset($this->content[$rowIndex]['columns'][$colIndex]['elements'][$elIndex]);
-
-        $this->content[$rowIndex]['columns'][$colIndex]['elements']
-            = array_values($this->content[$rowIndex]['columns'][$colIndex]['elements']);
+        $this->content[$rowIndex]['columns'][$colIndex]['elements'] = array_values($this->content[$rowIndex]['columns'][$colIndex]['elements']);
+        $this->normalizeContent();
     }
 
     public function uploadElementImage($rowIndex, $colIndex, $elIndex)
     {
         $path = $this->image_tmp->store('pages/builder', 'public');
-
         $this->content[$rowIndex]['columns'][$colIndex]['elements'][$elIndex]['data']['path'] = $path;
-
         $this->image_tmp = null;
-
         $this->iteration++;
+        $this->normalizeContent();
     }
-
-    /*
-    |--------------------------------------------------------------------------
-    | Slug
-    |--------------------------------------------------------------------------
-    */
 
     public function updatedTitle($value)
     {
-        if (!$this->isEditing) {
-            $this->slug = Str::slug($value);
-        }
+        if (!$this->isEditing) $this->slug = Str::slug($value);
     }
-
-    /*
-    |--------------------------------------------------------------------------
-    | Save
-    |--------------------------------------------------------------------------
-    */
 
     public function savePage()
     {
-
         $this->validate([
             'title' => 'required|string|max:255',
             'slug' => ['required', Rule::unique('pages')->ignore($this->pageId)],
-            'theme_id' => 'required|exists:themes,id',
+            'theme_id' => 'required|exists:themes,id'
         ]);
-
         $data = [
             'title' => $this->title,
             'slug' => $this->slug,
@@ -227,20 +173,15 @@ class Manage extends Component
             'content' => $this->content,
             'published_at' => $this->status === 'published' ? now() : null,
         ];
-
-        if ($this->temp_og_image) {
-            $data['og_image'] = $this->temp_og_image->store('seo', 'public');
-        }
-
+        if ($this->temp_og_image) $data['og_image'] = $this->temp_og_image->store('seo', 'public');
         Page::updateOrCreate(['id' => $this->pageId], $data);
-
         session()->flash('message', 'Page saved successfully!');
-
         return redirect()->route('page.index');
     }
 
     public function render()
     {
+        $this->normalizeContent();
         return view('livewire.page.manage', [
             'themes' => Theme::where('type', $this->page_type)->get(),
             'headers' => Header::all(),
