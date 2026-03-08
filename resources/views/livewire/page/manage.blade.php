@@ -69,7 +69,7 @@
                                                         </select>
                                                     </div>
                                                 </div>
-                                                <div wire:key="editor-{{ $rowIndex }}-{{ $colIndex }}-{{ $elIndex }}">
+                                                <div wire:key="editor-{{ $rowIndex }}-{{ $colIndex }}-{{ $elIndex }}" class="page-editor">
                                                     <livewire:quill-text-editor
                                                         wire:model.live="content.{{ $rowIndex }}.columns.{{ $colIndex }}.elements.{{ $elIndex }}.data.content"
                                                         theme="snow"
