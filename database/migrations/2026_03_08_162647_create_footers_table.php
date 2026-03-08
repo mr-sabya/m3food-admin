@@ -11,12 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('features', function (Blueprint $table) {
+        Schema::create('footers', function (Blueprint $table) {
             $table->id();
-            $table->string('icon'); // Stores path: 'assets/frontend/images/feature-icon_1.svg'
-            $table->string('title');
-            $table->string('subtitle')->nullable();
-            $table->integer('sort_order')->default(0);
+            $table->string('title'); // e.g., "Footer Style 1"
+            $table->string('preview_image');
             $table->boolean('is_active')->default(true);
             $table->timestamps();
         });
@@ -27,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('features');
+        Schema::dropIfExists('footers');
     }
 };

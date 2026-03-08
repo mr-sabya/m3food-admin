@@ -177,6 +177,116 @@
 
                 <li class="menu-title"><i class="ri-more-fill"></i> <span data-key="t-system">System</span></li>
 
+                <!-- Logistics / Store Management -->
+                <li class="nav-item">
+                    <a class="nav-link menu-link {{ (request()->routeIs('warehouse.*') || request()->routeIs('delivery-partner.*')) ? 'active' : 'collapsed' }}"
+                        href="#sidebarLogistics"
+                        data-bs-toggle="collapse"
+                        role="button"
+                        aria-expanded="{{ (request()->routeIs('warehouse.*') || request()->routeIs('delivery-partner.*')) ? 'true' : 'false' }}">
+                        <i class="bi bi-truck"></i> <span data-key="t-logistics">Logistics</span>
+                    </a>
+                    <div class="collapse menu-dropdown {{ (request()->routeIs('warehouse.*') || request()->routeIs('delivery-partner.*')) ? 'show' : '' }}" id="sidebarLogistics">
+                        <ul class="nav nav-sm flex-column">
+                            <!-- Warehouses -->
+                            <li class="nav-item">
+                                <a href="{{ route('warehouse.index') }}"
+                                    class="nav-link {{ request()->routeIs('warehouse.*') ? 'active' : '' }}"
+                                    wire:navigate>
+                                    Warehouses
+                                </a>
+                            </li>
+                            <!-- Delivery Partners -->
+                            <li class="nav-item">
+                                <a href="{{ route('delivery-partner.index') }}"
+                                    class="nav-link {{ request()->routeIs('delivery-partner.*') ? 'active' : '' }}"
+                                    wire:navigate>
+                                    Delivery Partners
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+
+                <!-- Template Management -->
+                <li class="nav-item">
+                    <a class="nav-link menu-link {{ request()->routeIs('template.*') ? 'active' : 'collapsed' }}"
+                        href="#sidebarTemplates"
+                        data-bs-toggle="collapse"
+                        role="button"
+                        aria-expanded="{{ request()->routeIs('template.*') ? 'true' : 'false' }}"
+                        aria-controls="sidebarTemplates">
+                        <i class="bi bi-window-stack"></i> <span data-key="t-templates">Design Templates</span>
+                    </a>
+                    <div class="collapse menu-dropdown {{ request()->routeIs('template.*') ? 'show' : '' }}" id="sidebarTemplates">
+                        <ul class="nav nav-sm flex-column">
+                            <!-- Themes -->
+                            <li class="nav-item">
+                                <a href="{{ route('template.theme') }}"
+                                    class="nav-link {{ request()->routeIs('template.theme') ? 'active' : '' }}"
+                                    wire:navigate>
+                                    Themes
+                                </a>
+                            </li>
+                            <!-- Headers -->
+                            <li class="nav-item">
+                                <a href="{{ route('template.header') }}"
+                                    class="nav-link {{ request()->routeIs('template.header') ? 'active' : '' }}"
+                                    wire:navigate>
+                                    Headers
+                                </a>
+                            </li>
+                            <!-- Footers -->
+                            <li class="nav-item">
+                                <a href="{{ route('template.footer') }}"
+                                    class="nav-link {{ request()->routeIs('template.footer') ? 'active' : '' }}"
+                                    wire:navigate>
+                                    Footers
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+
+                <!-- Page Management -->
+                <li class="nav-item">
+                    <a class="nav-link menu-link {{ request()->routeIs('page.*') ? 'active' : 'collapsed' }}"
+                        href="#sidebarPages"
+                        data-bs-toggle="collapse"
+                        role="button"
+                        aria-expanded="{{ request()->routeIs('page.*') ? 'true' : 'false' }}"
+                        aria-controls="sidebarPages">
+                        <i class="bi bi-file-earmark-text"></i> <span data-key="t-pages">Pages</span>
+                    </a>
+                    <div class="collapse menu-dropdown {{ request()->routeIs('page.*') ? 'show' : '' }}" id="sidebarPages">
+                        <ul class="nav nav-sm flex-column">
+                            <!-- All Pages -->
+                            <li class="nav-item">
+                                <a href="{{ route('page.index') }}"
+                                    class="nav-link {{ request()->routeIs('page.index') || request()->routeIs('page.show') ? 'active' : '' }}"
+                                    wire:navigate>
+                                    All Pages
+                                </a>
+                            </li>
+                            <!-- Create New Page -->
+                            <li class="nav-item">
+                                <a href="{{ route('page.create') }}"
+                                    class="nav-link {{ request()->routeIs('page.create') ? 'active' : '' }}"
+                                    wire:navigate>
+                                    Add New Page
+                                </a>
+                            </li>
+
+                            <!-- Hidden Edit State (Ensures parent stays open during editing) -->
+                            @if(request()->routeIs('page.edit'))
+                            <li class="nav-item d-none">
+                                <a href="#" class="nav-link active">Editing Page</a>
+                            </li>
+                            @endif
+                        </ul>
+                    </div>
+                </li>
+
                 <li class="nav-item">
                     <a href="{{ route('settings.index') }}" class="nav-link menu-link {{ request()->routeIs('settings.index') ? 'active' : '' }}" wire:navigate>
                         <i class="bi bi-gear"></i> <span data-key="t-settings">Settings</span>

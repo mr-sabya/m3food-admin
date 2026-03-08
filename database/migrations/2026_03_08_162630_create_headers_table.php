@@ -11,12 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('ad_banners', function (Blueprint $table) {
+        Schema::create('headers', function (Blueprint $table) {
             $table->id();
-            $table->string('title')->nullable();
-            $table->string('image_path');
-            $table->string('link')->nullable(); // Where the user goes when they click
-            $table->string('slug')->unique();   // We'll use this for positions like 'home-top-left'
+            $table->string('title'); // e.g., "Header Style 1"
+            $table->string('preview_image'); // The design screenshot
             $table->boolean('is_active')->default(true);
             $table->timestamps();
         });
@@ -27,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('ad_banners');
+        Schema::dropIfExists('headers');
     }
 };

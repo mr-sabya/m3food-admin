@@ -94,7 +94,7 @@ Route::middleware('auth:admin')->group(function () {
 
     // orders
     Route::get('/orders', [App\Http\Controllers\Backend\OrderController::class, 'index'])->name('order.index');
-    
+
     // create order
     Route::get('/orders/create', [App\Http\Controllers\Backend\OrderController::class, 'create'])->name('order.create');
 
@@ -138,6 +138,7 @@ Route::middleware('auth:admin')->group(function () {
         Route::get('/', [App\Http\Controllers\Backend\PageController::class, 'index'])->name('index');
         Route::get('/create', [App\Http\Controllers\Backend\PageController::class, 'create'])->name('create');
         Route::get('/{id}/edit', [App\Http\Controllers\Backend\PageController::class, 'edit'])->name('edit');
+        Route::get('/{id}', [App\Http\Controllers\Backend\PageController::class, 'show'])->name('show');
     });
 
     // shipping methods
@@ -145,11 +146,21 @@ Route::middleware('auth:admin')->group(function () {
 
     // payment methods
     Route::get('/payment-methods', [App\Http\Controllers\Backend\PaymentMethodController::class, 'index'])->name('payment-method.index');
-    
-    
+
+
     Route::get('/profile', [App\Http\Controllers\Backend\AdminController::class, 'profile'])->name('profile');
     Route::get('/change-password', [App\Http\Controllers\Backend\AdminController::class, 'changePassword'])->name('change-password');
-    
+
     // ware house
-    Route::get('/warehouse', [App\Http\Controllers\Backend\StoreController::class, 'WareHouse'])->name('warehouse.index');
+    Route::get('/warehouses', [App\Http\Controllers\Backend\StoreController::class, 'WareHouse'])->name('warehouse.index');
+
+    // delivery-partner
+    Route::get('/delivery-partners', [App\Http\Controllers\Backend\StoreController::class, 'DeliveryPartner'])->name('delivery-partner.index');
+
+    // header-manager
+    Route::prefix('template')->name('template.')->group(function () {
+        Route::get('/header', [App\Http\Controllers\Backend\TemplateController::class, 'header'])->name('header');
+        Route::get('/footer', [App\Http\Controllers\Backend\TemplateController::class, 'footer'])->name('footer');
+        Route::get('/theme', [App\Http\Controllers\Backend\TemplateController::class, 'theme'])->name('theme');
+    });
 });

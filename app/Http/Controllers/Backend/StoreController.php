@@ -10,6 +10,11 @@ class StoreController extends Controller
     //
     public function WareHouse()
     {
-        return view('backend.warehouse.index');    
+        return view('backend.warehouse.index');
+    }
+
+    public function DeliveryPartner() 
+    {
+        return view('backend.delivery-partner.index');
     }
 }

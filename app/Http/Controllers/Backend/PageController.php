@@ -26,4 +26,11 @@ class PageController extends Controller
         $page = Page::findOrFail($id);
         return view('backend.page.edit', compact('page'));
     }
+
+    // edit
+    public function show($id)
+    {
+        $page = Page::findOrFail($id);
+        return view('backend.page.show', compact('page'));
+    }
 }

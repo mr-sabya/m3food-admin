@@ -2,68 +2,90 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Str;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Builder;
 
 class Page extends Model
 {
-    use HasFactory;
-
     protected $fillable = [
         'title',
         'slug',
-        'content',
-        'banner_image',
+        'page_type',
+        'status',
+        'theme_id',
+        'header_id',
+        'footer_id',
+        'is_header_visible',
+        'is_footer_visible',
         'meta_title',
         'meta_description',
         'meta_keywords',
-        'template',
-        'is_active',
-        'sort_order',
+        'og_image',
+        'main_product_id',
+        'upsell_product_ids',
+        'show_checkout_form',
+        'show_timer',
+        'timer_ends_at',
+        'content',
+        'published_at'
     ];
 
     protected $casts = [
-        'is_active' => 'boolean',
+        'content' => 'array',
+        'upsell_product_ids' => 'array',
+        'timer_ends_at' => 'datetime',
+        'is_header_visible' => 'boolean',
+        'is_footer_visible' => 'boolean',
+        'show_checkout_form' => 'boolean',
+        'show_timer' => 'boolean',
+        'published_at' => 'datetime',
     ];
 
-    // --- Boot Method (Auto-generate Slug) ---
-    protected static function boot()
+    // --- Relationships ---
+
+    public function theme(): BelongsTo
     {
-        parent::boot();
-
-        static::creating(function ($page) {
-            if (empty($page->slug)) {
-                $page->slug = Str::slug($page->title);
-            }
-        });
-
-        static::updating(function ($page) {
-            if ($page->isDirty('title') && empty($page->slug)) {
-                $page->slug = Str::slug($page->title);
-            }
-        });
+        return $this->belongsTo(Theme::class);
+    }
+    public function header(): BelongsTo
+    {
+        return $this->belongsTo(Header::class);
+    }
+    public function footer(): BelongsTo
+    {
+        return $this->belongsTo(Footer::class);
+    }
+    public function mainProduct(): BelongsTo
+    {
+        return $this->belongsTo(Product::class, 'main_product_id');
     }
 
-    // --- Scopes ---
-    public function scopeActive($query)
+    // --- Scopes (For clean queries) ---
+
+    public function scopePublished(Builder $query)
     {
-        return $query->where('is_active', true);
+        return $query->where('status', 'published')
+            ->where('published_at', '<=', now());
     }
 
-    public function scopeSorted($query)
+    // --- Accessors (SEO Fallbacks for React) ---
+
+    public function getSeoDataAttribute()
     {
-        return $query->orderBy('sort_order', 'asc');
+        return [
+            'title' => $this->meta_title ?: $this->title,
+            'description' => $this->meta_description ?: 'Welcome to M3 Food',
+            'keywords' => $this->meta_keywords,
+            'og_image' => $this->og_image ? asset('storage/' . $this->og_image) : asset('default-share.jpg'),
+            'robots' => $this->meta_robots,
+        ];
     }
 
-    // --- Accessors ---
-    public function getBannerUrlAttribute()
+    // --- Helper Logic ---
+
+    public function hasActiveTimer(): bool
     {
-        if ($this->banner_image && Storage::disk('public')->exists($this->banner_image)) {
-            return asset('storage/' . $this->banner_image);
-        }
-        // Optional: Return a default banner if none exists
-        return null;
+        return $this->show_timer && $this->timer_ends_at && $this->timer_ends_at->isFuture();
     }
 }
