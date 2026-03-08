@@ -1,5 +1,5 @@
 <div wire:ignore>
-    <div id="{{ $quillId }}" style="height: {{ $height ?? '400px' }};"></div>
+    <div id="{{ $quillId }}" class="ql-editor"></div>
 </div>
 
 @script

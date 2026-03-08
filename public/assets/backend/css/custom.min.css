@@ -126,3 +126,11 @@
     color: #3b82f6;
     /* Icon turns blue on hover for a nice touch */
 }
+
+.ql-editor{
+    min-height: 400px;
+}
+
+.page-editor .ql-editor{
+    min-height: 100px;
+}
