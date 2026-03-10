@@ -187,7 +187,7 @@
                             </select>
                         </div>
 
-                        
+
                     </div>
                 </div>
 
@@ -238,4 +238,34 @@
             </button>
         </div>
     </form>
+
+    @if ($product->exists)
+    <div class="card mt-4">
+        <div class="card-header bg-transparent border-bottom-0 pt-3 pb-0">
+            <h5 class="mb-3">Additional Product Management</h5>
+            <ul class="nav nav-tabs" id="productTabs" role="tablist">
+                <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#images" type="button"><i class="fas fa-images me-1"></i> Images</button></li>
+                <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#specs" type="button"><i class="fas fa-list-ul me-1"></i> Specifications</button></li>
+                @if ($product->isVariable())
+                <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#variants" type="button"><i class="fas fa-tags me-1"></i> Variants</button></li>
+                @endif
+                <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tags" type="button"><i class="fas fa-tag me-1"></i> Tags</button></li>
+                <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#seo" type="button"><i class="fas fa-search me-1"></i> SEO</button></li>
+            </ul>
+        </div>
+
+        <div class="card-body">
+            <div class="tab-content">
+                <div class="tab-pane fade show active" id="images"><livewire:product.images-manager :product="$product" /></div>
+                <div class="tab-pane fade" id="specs"><livewire:product.specifications-manager :product="$product" /></div>
+                @if ($product->isVariable())
+                <div class="tab-pane fade" id="variants"><livewire:product.variants-manager :product="$product" /></div>
+                @endif
+                <div class="tab-pane fade" id="tags"><livewire:product.tags-manager :product="$product" /></div>
+                <div class="tab-pane fade" id="seo"><livewire:product.seo-manager :product="$product" /></div>
+            </div>
+        </div>
+    </div>
+    <livewire:product.landing-builder productId="{{ $product->id }}" />
+    @endif
 </div>

@@ -151,7 +151,7 @@ class Index extends Component
     public function render()
     {
         $products = Product::query()
-            ->with(['categories', 'brand', 'vendor', 'images']) // Eager load relationships for display
+            ->with(['categories', 'brand', 'images']) // Eager load relationships for display
             ->when($this->search, function (Builder $query) {
                 $query->where('name', 'like', '%' . $this->search . '%')
                       ->orWhere('sku', 'like', '%' . $this->search . '%')

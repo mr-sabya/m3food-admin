@@ -44,37 +44,39 @@ class Product extends Model
         'og_title',
         'og_description',
         'og_image_path',
+        // New Marketing Fields
+        'stock_alert_count',
+        'sale_ends_at',
     ];
 
-    protected $appends = ['thumbnail_url', 'current_stock', 'effective_price'];
+    // Added marketing appends for the landing page
+    protected $appends = [
+        'thumbnail_url',
+        'current_stock',
+        'effective_price',
+        'discount_percentage',
+        'savings_amount'
+    ];
 
     protected $casts = [
-        // Price Casts
         'regular_price'     => 'decimal:2',
         'sale_price'        => 'decimal:2',
         'retail_price'      => 'decimal:2',
         'distributor_price' => 'decimal:2',
         'purchase_price'    => 'decimal:2',
-
-        // Spec Casts
         'weight'            => 'decimal:2',
         'weight_unit'       => WeightUnit::class,
         'volume'            => 'decimal:2',
         'volume_unit'       => VolumeUnit::class,
-
-        // Boolean Casts
         'is_active'         => 'boolean',
         'is_featured'       => 'boolean',
         'is_new'            => 'boolean',
         'is_manage_stock'   => 'boolean',
-
-        // Integer Casts
         'quantity'           => 'integer',
         'min_order_quantity' => 'integer',
         'max_order_quantity' => 'integer',
-
-        // Enum Cast
-        'type' => ProductType::class,
+        'type'               => ProductType::class,
+        'sale_ends_at'       => 'datetime', // Cast for countdown timer
     ];
 
     protected $attributes = [
@@ -89,6 +91,17 @@ class Product extends Model
         parent::boot();
         static::creating(fn($product) => $product->slug = $product->slug ?? Str::slug($product->name));
         static::updating(fn($product) => $product->isDirty('name') && empty($product->slug) ? $product->slug = Str::slug($product->name) : null);
+    }
+
+    /* --- Landing Page Orchestration (Sorting Logic) --- */
+
+    /**
+     * This is the "Another Model" used for Livewire Drag-and-Drop.
+     * It pulls all sections (Title, Media, Benefits, etc.) in correct order.
+     */
+    public function pageSections()
+    {
+        return $this->hasMany(ProductPageSection::class)->orderBy('sort_order');
     }
 
     /* --- Relationships --- */
@@ -121,14 +134,37 @@ class Product extends Model
     {
         return $this->belongsToMany(Deal::class);
     }
-
-    // tags
     public function tags()
     {
         return $this->belongsToMany(Tag::class, 'product_tag');
     }
 
-    /* --- Accessors & Logic --- */
+    /* --- Accessors & Landing Page Logic --- */
+
+    /**
+     * Calculate Discount Percentage for the "Sale!" badge
+     * e.g., 1690 regular vs 1090 sale = 35% off
+     */
+    public function getDiscountPercentageAttribute(): int
+    {
+        if ($this->regular_price > 0 && $this->sale_price > 0) {
+            $discount = (($this->regular_price - $this->sale_price) / $this->regular_price) * 100;
+            return (int) round($discount);
+        }
+        return 0;
+    }
+
+    /**
+     * Calculate Total Savings
+     * e.g., ৳ ৬০০/- টাকা ছাড়
+     */
+    public function getSavingsAmountAttribute(): float
+    {
+        if ($this->sale_price > 0) {
+            return (float) ($this->regular_price - $this->sale_price);
+        }
+        return 0;
+    }
 
     public function getThumbnailUrlAttribute()
     {
@@ -140,16 +176,10 @@ class Product extends Model
         return $this->isVariable() ? (int) $this->variants()->sum('quantity') : (int) $this->quantity;
     }
 
-    /**
-     * Calculates the price after Sales or active Deals.
-     */
     public function getEffectivePriceAttribute()
     {
-        // 1. Start with Sale Price if it exists, otherwise Regular Price
         $basePrice = $this->sale_price ?? $this->regular_price;
-
-        // 2. Apply active Deal discounts if any
-        $activeDeal = $this->deals()->where('is_active', true)->first(); // Simplified for example
+        $activeDeal = $this->deals()->where('is_active', true)->first();
 
         if ($activeDeal) {
             if ($activeDeal->type === 'percentage') {
@@ -158,7 +188,6 @@ class Product extends Model
                 $basePrice = max(0, $basePrice - $activeDeal->value);
             }
         }
-
         return $basePrice;
     }
 
@@ -171,7 +200,6 @@ class Product extends Model
         return $this->type === ProductType::Variable;
     }
 
-    // active
     public function scopeActive($query)
     {
         return $query->where('is_active', true);
