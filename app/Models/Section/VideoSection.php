@@ -1,6 +1,7 @@
 <?php
 
-namespace App\Models;
+namespace App\Models\Section;
+
 
 use Illuminate\Database\Eloquent\Model;
 
@@ -11,4 +12,9 @@ class VideoSection extends Model
         'video_url',
         'video_title'
     ];
+
+    public function productPageSection()
+    {
+        return $this->morphOne(ProductPageSection::class, 'sectionable');
+    }
 }

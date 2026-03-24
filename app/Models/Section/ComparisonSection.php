@@ -1,12 +1,19 @@
 <?php
 
-namespace App\Models;
+namespace App\Models\Section;
+
 
 use Illuminate\Database\Eloquent\Model;
 
 class ComparisonSection extends Model
 {
-    protected $fillable = ['product_id', 'title', 'title_tag', 'title_color', 'border_color'];
+    protected $fillable = [
+        'product_id',
+        'title',
+        'title_tag',
+        'title_color',
+        'border_color'
+    ];
 
     public function productPageSection()
     {

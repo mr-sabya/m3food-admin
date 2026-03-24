@@ -1,6 +1,7 @@
 <?php
 
-namespace App\Models;
+namespace App\Models\Section;
+
 
 use Illuminate\Database\Eloquent\Model;
 
@@ -13,4 +14,9 @@ class MarketingHighlightSection extends Model
         'bottom_boxed_text',
         'bottom_box_border_color'
     ];
+
+    public function productPageSection()
+    {
+        return $this->morphOne(ProductPageSection::class, 'sectionable');
+    }
 }

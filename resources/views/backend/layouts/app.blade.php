@@ -163,6 +163,7 @@
     <script src="{{ asset('assets/backend/js/app.js') }}"></script>
 
     @livewireScripts
+    @stack('scripts')
     <script>
         document.addEventListener('livewire:init', () => {
             // Global listener for toast events from Livewire

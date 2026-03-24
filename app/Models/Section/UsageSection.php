@@ -1,6 +1,7 @@
 <?php
 
-namespace App\Models;
+namespace App\Models\Section;
+
 
 use Illuminate\Database\Eloquent\Model;
 
@@ -11,5 +12,10 @@ class UsageSection extends Model
     public function items()
     {
         return $this->hasMany(UsageItem::class)->orderBy('sort_order');
+    }
+
+    public function productPageSection()
+    {
+        return $this->morphOne(ProductPageSection::class, 'sectionable');
     }
 }

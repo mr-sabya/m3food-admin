@@ -1,6 +1,7 @@
 <?php
 
-namespace App\Models;
+namespace App\Models\Section;
+
 
 use Illuminate\Database\Eloquent\Model;
 
@@ -17,5 +18,10 @@ class MediaNewsSection extends Model
     public function videos()
     {
         return $this->hasMany(MediaVideo::class);
+    }
+
+    public function productPageSection()
+    {
+        return $this->morphOne(ProductPageSection::class, 'sectionable');
     }
 }

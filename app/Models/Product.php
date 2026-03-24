@@ -8,6 +8,7 @@ use Illuminate\Support\Str;
 use App\Enums\ProductType;
 use App\Enums\VolumeUnit;
 use App\Enums\WeightUnit;
+use App\Models\Section\ProductPageSection;
 use Illuminate\Support\Facades\Storage;
 
 class Product extends Model

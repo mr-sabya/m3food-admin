@@ -1,6 +1,7 @@
 <?php
 
-namespace App\Models;
+namespace App\Models\Section;
+
 
 use Illuminate\Database\Eloquent\Model;
 
@@ -15,4 +16,9 @@ class CountdownSection extends Model
         'end_time',
         'bg_color'
     ];
+
+    public function productPageSection()
+    {
+        return $this->morphOne(ProductPageSection::class, 'sectionable');
+    }
 }

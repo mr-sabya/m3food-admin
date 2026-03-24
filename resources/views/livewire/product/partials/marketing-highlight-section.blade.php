@@ -15,6 +15,7 @@
                 <label class="small fw-bold mb-1">Content (HTML Supported)</label>
                 <textarea class="form-control" wire:model="formData.top_boxed_text" rows="3"
                     placeholder="e.g. মাত্র ০৫ মিনিটে সর্দি-কাশি দূর করার চ্যালেঞ্জ!"></textarea>
+                <small class="text-muted">Use <code>&lt;span class="highlight-underline"&gt;text&lt;/span&gt;</code> for emphasis.</small>
             </div>
             <div class="row align-items-center">
                 <div class="col-md-6">
@@ -43,6 +44,7 @@
                 <label class="small fw-bold mb-1">Content (HTML Supported)</label>
                 <textarea class="form-control" wire:model="formData.bottom_boxed_text" rows="3"
                     placeholder="e.g. চুইঝাল খুলনাঞ্চলের একটি ঐতিহ্যবাহী ঔষধী খাবার..."></textarea>
+                <small class="text-muted">Use <code>&lt;span class="highlight-underline"&gt;text&lt;/span&gt;</code> for emphasis.</small>
             </div>
             <div class="row align-items-center">
                 <div class="col-md-6">

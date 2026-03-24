@@ -1,12 +1,16 @@
 <?php
 
-namespace App\Models;
+namespace App\Models\Section;
+
 
 use Illuminate\Database\Eloquent\Model;
 
-class DisclaimerSection extends Model
+class VariationPriceSection extends Model
 {
-    protected $fillable = ['product_id', 'question', 'answer', 'bg_color', 'text_color'];
+    protected $fillable = [
+        'product_id',
+        'footer_note'
+    ];
 
     public function productPageSection()
     {

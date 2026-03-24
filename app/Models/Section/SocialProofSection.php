@@ -1,12 +1,18 @@
 <?php
 
-namespace App\Models;
+namespace App\Models\Section;
+
 
 use Illuminate\Database\Eloquent\Model;
 
 class SocialProofSection extends Model
 {
-    protected $fillable = ['product_id', 'heading', 'bg_color', 'text_color'];
+    protected $fillable = [
+        'product_id',
+        'heading',
+        'bg_color',
+        'text_color'
+    ];
 
     // Link to the Orchestrator for Drag & Drop
     public function productPageSection()

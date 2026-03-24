@@ -1,22 +1,21 @@
 <?php
 
-namespace App\Models;
+namespace App\Models\Section;
+
 
 use Illuminate\Database\Eloquent\Model;
 
-class TitleSection extends Model
+class FeatureCardSection extends Model
 {
     protected $fillable = [
         'product_id',
-        'title',
-        'title_color',
-        'title_bg',
-        'title_tag',
-        'subtitle',
-        'subtitle_color',
-        'subtitle_bg',
-        'subtitle_tag'
+        'section_title'
     ];
+
+    public function cards()
+    {
+        return $this->hasMany(FeatureCard::class)->orderBy('sort_order');
+    }
 
     public function productPageSection()
     {
